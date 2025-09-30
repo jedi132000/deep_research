@@ -48,15 +48,39 @@ async def run_scoping_research(query: str) -> str:
         
         # Check if this contains a research brief (successful scoping)
         if result.get("research_brief"):
-            return f"**Research Brief Generated**\\n\\n{result['research_brief']}\\n\\n*This research brief will guide the investigation. You can now proceed with your preferred research mode.*"
+            formatted_brief = f"""## 📋 Research Brief Generated
+
+{result['research_brief']}
+
+---
+✅ **Ready to Research**: This research brief will guide the investigation. You can now proceed with your preferred research mode for detailed results."""
+            return formatted_brief
         
         # If no research brief, this means clarification was needed
         # Check if the AI response looks like a clarifying question (contains question marks or specific keywords)
         if any(indicator in ai_response.lower() for indicator in ['?', 'clarify', 'please provide', 'could you', 'what specific', 'more details']):
-            return f"**Clarification Needed**\\n\\n{ai_response}\\n\\n*Please provide more details so I can better assist with your research.*"
+            formatted_response = f"""## 🤔 Clarification Needed
+
+{ai_response}
+
+---
+💡 **Next Steps**: Please provide more specific details about what you'd like to research, and I'll help you get better, more focused results.
+
+**Helpful details to include:**
+- Specific time period or geographic focus
+- Particular aspects you're most interested in  
+- Intended use case or audience for the research
+- Any constraints or requirements"""
+            return formatted_response
         
         # Otherwise, it's a verification that we can proceed
-        return f"**Scoping Complete**\\n\\n{ai_response}"
+        formatted_complete = f"""## ✅ Scoping Complete
+
+{ai_response}
+
+---
+🚀 **Ready to Proceed**: Your query is well-scoped and ready for research. Continue with your selected research mode for comprehensive results."""
+        return formatted_complete
         
     except Exception as e:
         # Handle various types of errors gracefully

@@ -15,6 +15,7 @@ from langchain.chat_models import init_chat_model
 from deep_research_from_scratch.state_research import ResearcherState, ResearcherOutputState
 from deep_research_from_scratch.utils import tavily_search, get_today_str, think_tool
 from deep_research_from_scratch.prompts import research_agent_prompt, compress_research_system_prompt, compress_research_human_message
+from deep_research_from_scratch.cost_tracking_wrapper import wrap_model_for_cost_tracking
 
 # ===== CONFIGURATION =====
 
@@ -22,11 +23,16 @@ from deep_research_from_scratch.prompts import research_agent_prompt, compress_r
 tools = [tavily_search, think_tool]
 tools_by_name = {tool.name: tool for tool in tools}
 
-# Initialize models
-model = init_chat_model(model="anthropic:claude-sonnet-4-20250514")
-model_with_tools = model.bind_tools(tools)
-summarization_model = init_chat_model(model="openai:gpt-4.1-mini")
-compress_model = init_chat_model(model="openai:gpt-4.1", max_tokens=32000) # model="anthropic:claude-sonnet-4-20250514", max_tokens=64000
+# Initialize models - using faster models for Basic Research
+base_model = init_chat_model(model="openai:gpt-4o-mini")  # Much faster than Claude Sonnet 4
+base_summarization_model = init_chat_model(model="openai:gpt-4o-mini")  # Faster summarization
+base_compress_model = init_chat_model(model="openai:gpt-4o", max_tokens=16000)  # Balanced speed/quality
+
+# Wrap models for cost tracking
+model = wrap_model_for_cost_tracking(base_model, "openai:gpt-4o-mini")
+model_with_tools = base_model.bind_tools(tools)  # Keep original for tool binding
+summarization_model = wrap_model_for_cost_tracking(base_summarization_model, "openai:gpt-4o-mini")
+compress_model = wrap_model_for_cost_tracking(base_compress_model, "openai:gpt-4o")
 
 # ===== AGENT NODES =====
 

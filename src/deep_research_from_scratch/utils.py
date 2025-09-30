@@ -17,6 +17,7 @@ from tavily import TavilyClient
 
 from deep_research_from_scratch.state_research import Summary
 from deep_research_from_scratch.prompts import summarize_webpage_prompt
+from deep_research_from_scratch.cost_tracker import cost_tracker
 
 # ===== UTILITY FUNCTIONS =====
 
@@ -180,7 +181,7 @@ def format_search_output(summarized_results: dict) -> str:
 @tool
 def tavily_search(
     query: str,
-    max_results: Annotated[int, InjectedToolArg] = 3,
+    max_results: Annotated[int, InjectedToolArg] = 2,  # Reduced from 3 to 2 for faster processing
     topic: Annotated[Literal["general", "news", "finance"], InjectedToolArg] = "general",
 ) -> str:
     """Fetch results from Tavily search API with content summarization.
@@ -190,6 +191,12 @@ def tavily_search(
         max_results: Maximum number of results to return
         topic: Topic to filter results by ('general', 'news', 'finance')
     """
+    # Track Tavily search cost
+    try:
+        cost_tracker.track_tavily_search(1)  # Track 1 search call
+    except Exception as e:
+        print(f"Cost tracking error: {e}")
+    
     # Execute search for single query
     search_results = tavily_search_multiple(
         [query],  # Convert single query to list for the internal function
