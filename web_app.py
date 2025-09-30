@@ -900,7 +900,13 @@ if st.session_state.submitted_query and not st.session_state.get('processing', F
     
     current_progress = progress_info.get(mode, {
         "message": "🔬 Conducting research...",
-        "steps": ["🔍 Analyzing query", "📊 Processing data", "✅ Generating results"]
+        "avatar": "🔬",
+        "estimated_time": "30-60 seconds",
+        "steps": [
+            {"icon": "🔍", "text": "Analyzing query", "time": "10s"},
+            {"icon": "📊", "text": "Processing data", "time": "25s"},
+            {"icon": "✅", "text": "Generating results", "time": "10s"}
+        ]
     })
     
     # Enhanced progress container with animations and estimated time
