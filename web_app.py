@@ -8,6 +8,8 @@ Enhanced Streamlit web interface for the Deep Research Agent with improved UI/UX
 import streamlit as st
 import asyncio
 import time
+import json
+from datetime import datetime
 from typing import Optional
 
 # Import research functions (Basic Research is direct, others use scoping)
@@ -25,10 +27,10 @@ from src.deep_research_from_scratch.clarification_chatbot import clarification_c
 
 # Configure Streamlit
 st.set_page_config(
-    page_title="Deep Research from Scratch",
+    page_title="Deep Research Pro - Advanced AI Research Platform",
     page_icon="🔬",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # Custom CSS for enhanced UI
@@ -219,13 +221,16 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Main header with enhanced branding
+# Professional header with branding
 st.markdown("""
 <div class="main-header">
-    <h1>🔬 Deep Research from Scratch</h1>
-    <p>Advanced AI-Powered Research Platform with Multi-Source Data Integration</p>
-    <div style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
-        ✨ Local Files • 🌐 Web Search • 📊 Statistical Data • 🤖 Multi-Agent Analysis
+    <h1>🔬 Deep Research Pro</h1>
+    <p>Advanced AI-Powered Research Platform</p>
+    <div style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">
+        ✨ Multi-Source Intelligence • 🌐 Real-time Web Data • 📊 Statistical Analysis • 🤖 Multi-Agent Workflows
+    </div>
+    <div style="margin-top: 0.5rem; font-size: 0.8rem; opacity: 0.7;">
+        Professional-grade research with transparent cost tracking and guided query optimization
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -246,7 +251,7 @@ with st.sidebar:
             "Full Research"
         ],
         index=2,  # Default to Enhanced MCP Research
-        help="Each mode offers different capabilities and data sources"
+        help="💡 **Mode Selection Guide:**\n\n• **Basic**: Fast web search (30 sec, ~$0.02)\n• **MCP**: Document analysis (~1-2 min, ~$0.05)\n• **Enhanced MCP**: Multi-source data (~2-3 min, ~$0.10)\n• **Full**: Complete analysis (~3-5 min, ~$0.15-0.30)\n\nRecommended: Start with Enhanced MCP for balanced depth and speed."
     )
     
     st.markdown("---")
@@ -362,6 +367,61 @@ if st.sidebar.checkbox("📈 Show Daily Usage", value=False):
             st.sidebar.info("No usage data for today")
     except Exception as e:
         st.sidebar.error(f"Usage data unavailable: {str(e)}")
+    
+    # Professional Help & Resources Section
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### 📚 Help & Resources")
+    
+    with st.sidebar.expander("🚀 Quick Start Guide", expanded=False):
+        st.markdown("""
+        **Getting Started:**
+        1. 📝 Enter your research question
+        2. 🎯 Choose your research mode
+        3. 💬 Use clarification chat (Advanced modes)
+        4. ▶️ Click 'Start Research'
+        5. 📤 Export your results
+        
+        **Best Practices:**
+        • Be specific in your queries
+        • Start with Enhanced MCP for balance
+        • Use Basic mode for quick searches
+        • Monitor costs in real-time
+        """)
+    
+    with st.sidebar.expander("💰 Cost Management", expanded=False):
+        st.markdown("""
+        **Estimated Costs:**
+        • Basic Research: ~$0.02 (30 sec)
+        • MCP Research: ~$0.05 (1-2 min)  
+        • Enhanced MCP: ~$0.10 (2-3 min)
+        • Full Research: ~$0.15-0.30 (3-5 min)
+        
+        **Tips to Save:**
+        • Use Basic mode for simple queries
+        • Be specific to avoid re-runs
+        • Monitor daily usage above
+        """)
+    
+    with st.sidebar.expander("🔧 Troubleshooting", expanded=False):
+        st.markdown("""
+        **Common Issues:**
+        • **Empty Results**: Try rephrasing your query
+        • **Slow Performance**: Check your internet connection
+        • **API Errors**: Verify your API keys in .env file
+        • **Cost Concerns**: Use Basic mode or monitor usage
+        
+        **Need Help?** Enable Developer Mode for debug info.
+        """)
+    
+    # Footer
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("""
+    <div style='text-align: center; font-size: 0.8rem; color: #666;'>
+        🔬 <strong>Deep Research Pro</strong><br>
+        Advanced AI Research Platform<br>
+        <em>v2.0 - Professional Edition</em>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Research tips
 st.markdown("### 💡 Research Tips")
@@ -387,26 +447,18 @@ if 'submitted_query' not in st.session_state:
 if 'input_key' not in st.session_state:
     st.session_state.input_key = 0
 
-# Debug information
-st.sidebar.markdown("### 🐛 Debug Info")
-st.sidebar.write(f"clear_input: {st.session_state.clear_input}")
-st.sidebar.write(f"submitted_query: '{st.session_state.submitted_query}'")
-st.sidebar.write(f"input_key: {st.session_state.input_key}")
-st.sidebar.write(f"processing: {st.session_state.get('processing', False)}")
-
-# Show all session state for complete debugging
-st.sidebar.markdown("#### 📋 Full Session State")
-debug_state = {k: str(v)[:100] for k, v in st.session_state.items() if isinstance(k, str) and not k.startswith('FormSubmitter')}
-st.sidebar.json(debug_state)
-
-# Add debugging for current text area value
-st.sidebar.markdown("#### 🔍 Text Area Debug")
-current_key = f"query_input_{st.session_state.input_key}"
-st.sidebar.write(f"Current text area key: {current_key}")
-if current_key in st.session_state:
-    st.sidebar.write(f"Current text area value: '{st.session_state[current_key]}'")
-else:
-    st.sidebar.write("Text area not in session state yet")
+# Developer Debug Panel (hidden in production)
+if st.sidebar.checkbox("� Developer Mode", help="Show debug information for developers"):
+    with st.sidebar.expander("Debug Information", expanded=False):
+        st.write(f"clear_input: {st.session_state.clear_input}")
+        st.write(f"submitted_query: '{st.session_state.submitted_query}'")
+        st.write(f"input_key: {st.session_state.input_key}")
+        st.write(f"processing: {st.session_state.get('processing', False)}")
+        
+        current_key = f"query_input_{st.session_state.input_key}"
+        st.write(f"Text area key: {current_key}")
+        if current_key in st.session_state:
+            st.write(f"Text area value: '{st.session_state[current_key]}'")
 
 # Enhanced main content area
 col1, col2 = st.columns([3, 1])
@@ -539,8 +591,9 @@ with col1:
     # Clear input using dynamic key approach
     current_key = f"query_input_{st.session_state.input_key}"
     
-    # Debug info right above the text area
-    st.caption(f"🔧 Debug: Using key '{current_key}', clear_input={st.session_state.clear_input}")
+    # Input status (only show if developer mode enabled)
+    if st.sidebar.checkbox("🔧 Developer Mode", help="Show debug information for developers"):
+        st.caption(f"🔧 Debug: Using key '{current_key}', clear_input={st.session_state.clear_input}")
     
     # Check if we have a suggested query from chatbot
     default_value = ""
@@ -570,13 +623,15 @@ with col1:
         key=current_key
     )
     
-    # Show what the query variable contains
+    # Professional input feedback
     if query:
-        st.caption(f"📝 Current input: '{query}' (length: {len(query)})")
+        char_count = len(query)
+        if char_count > 10:
+            st.success(f"✅ Query ready ({char_count} characters)")
         if is_advanced_mode and not st.session_state.chatbot_active:
-            st.info("💡 **Tip**: For advanced modes, consider using the clarification chat to optimize your query further.")
-    else:
-        st.caption("📝 Input is empty")
+            st.info("💡 **Pro Tip**: Use the clarification chat above to optimize your query for better results.")
+    elif not query:
+        st.info("� Enter your research question to get started")
 
 with col2:
     # Mode-specific examples
@@ -1024,13 +1079,58 @@ if st.session_state.submitted_query and not st.session_state.get('processing', F
         </div>
         """, unsafe_allow_html=True)
         
-        # Results with copy button
-        col1, col2 = st.columns([4, 1])
+        # Results with professional export options
+        col1, col2 = st.columns([3, 1])
         with col1:
             st.markdown(result)
         with col2:
-            if st.button("📋 Copy Results", help="Copy results to clipboard"):
+            st.markdown("### 📤 Export Options")
+            
+            # Download as markdown
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"research_report_{timestamp}.md"
+            
+            # Create downloadable content
+            export_content = f"""# Research Report
+**Query:** {query}
+**Mode:** {mode}  
+**Generated:** {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+---
+
+{result}
+
+---
+*Generated by Deep Research Pro - Advanced AI Research Platform*
+"""
+            
+            st.download_button(
+                label="📄 Download MD",
+                data=export_content,
+                file_name=filename,
+                mime="text/markdown",
+                help="Download research report as Markdown file"
+            )
+            
+            if st.button("📋 Copy Text", help="Copy results to clipboard"):
                 st.code(result, language="markdown")
+                
+            # Optional: Export as JSON for API integration
+            json_data = {
+                "query": query,
+                "mode": mode,
+                "timestamp": datetime.now().isoformat(),
+                "result": result,
+                "session_summary": "Available in session state"
+            }
+            
+            st.download_button(
+                label="📊 Download JSON",
+                data=json.dumps(json_data, indent=2),
+                file_name=f"research_data_{timestamp}.json",
+                mime="application/json",
+                help="Download structured data as JSON file"
+            )
         
         # Success metrics with enhanced styling and completion status
         st.markdown("""
