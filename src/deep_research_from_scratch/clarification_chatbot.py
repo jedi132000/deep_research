@@ -3,11 +3,16 @@ Conversational Clarification Chatbot for Research Query Refinement
 """
 
 import asyncio
-from typing import List, Dict, Optional, Any
+import os
+from typing import List, Dict, Optional, Any, Union
 from langchain_openai import ChatOpenAI
-from langchain.schema import HumanMessage, AIMessage, SystemMessage
+from langchain.schema import HumanMessage, AIMessage, SystemMessage, BaseMessage
 from .cost_tracker import cost_tracker
 import streamlit as st
+
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
 
 
 class ClarificationChatbot:
@@ -24,8 +29,7 @@ class ClarificationChatbot:
         if self.model is None:
             self.model = ChatOpenAI(
                 model="gpt-4o-mini",
-                temperature=0.1,
-                max_tokens=800
+                temperature=0.1
             )
     
     def get_system_prompt(self) -> str:
@@ -67,7 +71,7 @@ Current conversation context: The user wants to do research but needs help clari
             })
             
             # Build message history for the model
-            messages = [SystemMessage(content=self.get_system_prompt())]
+            messages: List[BaseMessage] = [SystemMessage(content=self.get_system_prompt())]
             
             # Add conversation history
             for msg in self.conversation_history:
@@ -76,11 +80,34 @@ Current conversation context: The user wants to do research but needs help clari
                 else:
                     messages.append(AIMessage(content=msg["content"]))
             
-            # Get response from model with cost tracking
-            with cost_tracker.track_model_usage("gpt-4o-mini", "clarification_chat"):
-                response = await self.model.ainvoke(messages)
+            # Get response from model
+            response = await self.model.ainvoke(messages)
             
-            bot_response = response.content
+            # Extract content safely
+            bot_response = response.content if hasattr(response, 'content') else str(response)
+            
+            # Ensure bot_response is a string
+            if isinstance(bot_response, list):
+                bot_response = ' '.join(str(item) for item in bot_response)
+            elif not isinstance(bot_response, str):
+                bot_response = str(bot_response)
+            
+            # Track the model usage for cost monitoring (simplified)
+            try:
+                # Estimate tokens (rough approximation: 1 token ≈ 4 characters)
+                input_text = user_message + self.get_system_prompt()
+                input_tokens = len(input_text) // 4
+                output_tokens = len(bot_response) // 4
+                
+                cost_tracker.track_model_call(
+                    model_name="gpt-4o-mini",
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
+                    operation="clarification_chat"
+                )
+            except Exception:
+                # If cost tracking fails, continue without it
+                pass
             
             # Add bot response to history
             self.conversation_history.append({
