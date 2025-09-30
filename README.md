@@ -1,8 +1,37 @@
-# 🧱 Deep Research Agent
+# 🔬 Deep Research Pro
 
-> **🚀 Enhanced Edition with Professional Web UI & Advanced Features**
+> **🚀 Professional AI-Powered Research Platform**
 
-An AI-powered research assistant that conducts comprehensive research using multiple modes and specialized agents. Built with LangGraph and designed for both researchers and developers who need deep, accurate, and well-sourced information.
+An advanced AI research assistant that conducts comprehensive research using multiple modes and specialized agents. Built with LangGraph and designed for professionals, researchers, and developers who need deep, accurate, and well-sourced information.
+
+## 🎬 **Demo & Overview**
+
+### 📹 **Watch the Platform in Action**
+<!-- 🎥 Professional Demo Video -->
+> **🔗 [📹 Watch Demo - Deep Research Pro Walkthrough](https://www.loom.com/share/your-video-id)**  
+> *See the professional interface, conversational clarification, cost tracking, and advanced research modes in action.*
+
+**What you'll see in the demo:**
+- 🎯 Professional UI and branding
+- 💬 Conversational query clarification  
+- 📊 Real-time cost tracking
+- ⚡ Multiple research modes in action
+- 📤 Export and save functionality
+
+### ⚡ **Quick Preview**
+- **Professional UI** with guided workflows
+- **Conversational Clarification** for query optimization  
+- **Real-time Cost Tracking** with transparent pricing
+- **Multiple Research Modes** from basic to advanced multi-agent
+- **Export & Save** research results in multiple formats
+
+### 🎬 **Embedded Demo** 
+<!-- Uncomment and replace YOUR_LOOM_EMBED_URL when you have the Loom video -->
+<!--
+<div style="position: relative; padding-bottom: 62.5%; height: 0;">
+  <iframe src="https://www.loom.com/embed/YOUR_LOOM_VIDEO_ID" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+</div>
+-->
 
 ## 🆕 **What's New in This Enhanced Version**
 

@@ -246,12 +246,12 @@ with st.sidebar:
         "Research Modes:",
         options=[
             "Basic Research",
-            "MCP Research", 
-            "Enhanced MCP Research",
-            "Full Research"
+            "Advanced Research", 
+            "Pro Research",
+            "Pro+ Research"
         ],
-        index=2,  # Default to Enhanced MCP Research
-        help="💡 **Mode Selection Guide:**\n\n• **Basic**: Fast web search (30 sec, ~$0.02)\n• **MCP**: Document analysis (~1-2 min, ~$0.05)\n• **Enhanced MCP**: Multi-source data (~2-3 min, ~$0.10)\n• **Full**: Complete analysis (~3-5 min, ~$0.15-0.30)\n\nRecommended: Start with Enhanced MCP for balanced depth and speed."
+        index=2,  # Default to Pro Research
+        help="💡 **Mode Selection Guide:**\n\n• **Basic**: Fast web search (30 sec, ~$0.02)\n• **Advanced**: Document analysis (~1-2 min, ~$0.05)\n• **Pro**: Multi-source data (~2-3 min, ~$0.10)\n• **Pro+**: Complete analysis (~3-5 min, ~$0.15-0.30)\n\nRecommended: Start with Pro Research for balanced depth and speed."
     )
     
     st.markdown("---")
@@ -264,23 +264,23 @@ with st.sidebar:
             "description": "Fast, direct web research - no scoping step. Perfect for quick queries and testing connectivity.",
             "features": ["🌐 Web search via Tavily", "⚡ Lightning fast", "🎯 Direct execution", "💰 Low token usage"]
         },
-        "MCP Research": {
+        "Advanced Research": {
             "icon": "📁",
-            "title": "MCP Research", 
-            "description": "Local document analysis through Model Context Protocol for file-based research.",
-            "features": ["📁 Local file access", "📄 Document analysis", "📝 Content extraction", "🔒 Privacy focused"]
+            "title": "Advanced Research", 
+            "description": "Local document analysis with intelligent scoping. Perfect for file-based research with guided optimization.",
+            "features": ["📁 Local file access", "📄 Document analysis", "🤖 Smart scoping", "🔒 Privacy focused"]
         },
-        "Enhanced MCP Research": {
+        "Pro Research": {
             "icon": "🌍",
-            "title": "Enhanced MCP Research",
-            "description": "Combines local files with Google Data Commons for comprehensive statistical analysis.",
-            "features": ["📁 Local documents", "📊 Statistical data", "🌐 Public datasets", "🔬 Multi-source analysis"]
+            "title": "Pro Research",
+            "description": "Combines local files with Google Data Commons for comprehensive statistical analysis and intelligent guidance.",
+            "features": ["📁 Local documents", "📊 Statistical data", "🌐 Public datasets", "� Smart guidance"]
         },
-        "Full Research": {
+        "Pro+ Research": {
             "icon": "⚡",
-            "title": "Full Research",
-            "description": "Comprehensive research combining web search, document analysis, and advanced synthesis.",
-            "features": ["🌐 Web search", "📄 Document analysis", "🧠 Advanced synthesis", "📋 Detailed reports"]
+            "title": "Pro+ Research",
+            "description": "Ultimate research combining multi-agent coordination, web search, document analysis, and enterprise-level synthesis.",
+            "features": ["🤖 Multi-agent system", "📄 Document analysis", "🧠 Enterprise synthesis", "📋 Detailed reports"]
         }
     }
     
@@ -392,9 +392,9 @@ if st.sidebar.checkbox("📈 Show Daily Usage", value=False):
         st.markdown("""
         **Estimated Costs:**
         • Basic Research: ~$0.02 (30 sec)
-        • MCP Research: ~$0.05 (1-2 min)  
-        • Enhanced MCP: ~$0.10 (2-3 min)
-        • Full Research: ~$0.15-0.30 (3-5 min)
+        • Advanced Research: ~$0.05 (1-2 min)  
+        • Pro Research: ~$0.10 (2-3 min)
+        • Pro+ Research: ~$0.15-0.30 (3-5 min)
         
         **Tips to Save:**
         • Use Basic mode for simple queries
@@ -467,7 +467,7 @@ with col1:
     st.markdown("### 📝 Research Query")
     
     # Check if this is an advanced mode that needs clarification chatbot
-    advanced_modes = ["MCP Research", "Enhanced MCP Research", "Full Research"]
+    advanced_modes = ["Advanced Research", "Pro Research", "Pro+ Research"]
     is_advanced_mode = mode in advanced_modes
     
     # Conversational Clarification Chatbot - Only for advanced modes
@@ -635,7 +635,7 @@ with col1:
 
 with col2:
     # Mode-specific examples
-    if mode == "Enhanced MCP Research":
+    if mode == "Pro Research":
         st.markdown("""
         <div style="background: #f0f8ff; padding: 1rem; border-radius: 8px; font-size: 0.85rem; color: #1a202c;">
             <strong>📊 Statistical Examples:</strong><br>
@@ -950,9 +950,9 @@ if st.session_state.submitted_query and not st.session_state.get('processing', F
         # Execute research
         research_functions = {
             "Basic Research": run_basic_research,
-            "MCP Research": run_mcp_research,
-            "Enhanced MCP Research": run_enhanced_mcp_research,
-            "Full Research": run_full_research
+            "Advanced Research": run_mcp_research,
+            "Pro Research": run_enhanced_mcp_research,
+            "Pro+ Research": run_full_research
         }
         
         research_func = research_functions[mode]
