@@ -20,10 +20,11 @@ from src.deep_research_from_scratch.main import (
     run_scoped_full_research as run_full_research
 )
 
-# Import cost tracking, virtual assistant, and clarification chatbot
+# Import cost tracking, virtual assistant, clarification chatbot, and feedback system
 from src.deep_research_from_scratch.cost_tracker import cost_tracker
 from src.deep_research_from_scratch.virtual_assistant import virtual_assistant
 from src.deep_research_from_scratch.clarification_chatbot import clarification_chatbot
+from src.deep_research_from_scratch.feedback_system import feedback_collector
 
 # Configure Streamlit
 st.set_page_config(
@@ -413,6 +414,10 @@ if st.sidebar.checkbox("📈 Show Daily Usage", value=False):
         **Need Help?** Enable Developer Mode for debug info.
         """)
     
+    # Pricing Flexibility & Recent Updates (Based on User Feedback)
+    feedback_collector.show_pricing_flexibility()
+    feedback_collector.show_improvement_changelog()
+    
     # Footer
     st.sidebar.markdown("---")
     st.sidebar.markdown("""
@@ -505,6 +510,9 @@ with col1:
                 if st.button("⚡ Skip Chat"):
                     st.session_state.chatbot_active = False
                     st.rerun()
+        
+        # Academic Citation Helper (for all modes)
+        feedback_collector.show_academic_citation_helper()
     
         # Chatbot Interface - Only for advanced modes
         if st.session_state.chatbot_active:
@@ -1153,6 +1161,9 @@ if st.session_state.submitted_query and not st.session_state.get('processing', F
         
         # Enhanced success message with completion confirmation
         st.success(f"🎉 Research completed successfully using **{mode}**! Generated comprehensive analysis in {total_time} seconds.")
+        
+        # Post-Research Feedback System (Key Improvement from User Feedback)
+        feedback_collector.show_post_research_feedback(mode, research_query, len(result))
         
         # Only now clean up the progress indicators after results are fully displayed
         time.sleep(0.5)  # Brief pause to ensure results are rendered
