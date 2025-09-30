@@ -32,11 +32,11 @@ compress_model = init_chat_model(model="openai:gpt-4.1", max_tokens=32000) # mod
 
 def llm_call(state: ResearcherState):
     """Analyze current state and decide on next actions.
-
+    
     The model analyzes the current conversation state and decides whether to:
     1. Call search tools to gather more information
     2. Provide a final answer based on gathered information
-
+    
     Returns updated state with the model's response.
     """
     return {
@@ -49,18 +49,18 @@ def llm_call(state: ResearcherState):
 
 def tool_node(state: ResearcherState):
     """Execute all tool calls from the previous LLM response.
-
+    
     Executes all tool calls from the previous LLM responses.
     Returns updated state with tool execution results.
     """
     tool_calls = state["researcher_messages"][-1].tool_calls
-
+ 
     # Execute all tool calls
     observations = []
     for tool_call in tool_calls:
         tool = tools_by_name[tool_call["name"]]
         observations.append(tool.invoke(tool_call["args"]))
-
+            
     # Create tool message outputs
     tool_outputs = [
         ToolMessage(
@@ -69,20 +69,20 @@ def tool_node(state: ResearcherState):
             tool_call_id=tool_call["id"]
         ) for observation, tool_call in zip(observations, tool_calls)
     ]
-
+    
     return {"researcher_messages": tool_outputs}
 
 def compress_research(state: ResearcherState) -> dict:
     """Compress research findings into a concise summary.
-
+    
     Takes all the research messages and tool outputs and creates
     a compressed summary suitable for the supervisor's decision-making.
     """
-
+    
     system_message = compress_research_system_prompt.format(date=get_today_str())
     messages = [SystemMessage(content=system_message)] + state.get("researcher_messages", []) + [HumanMessage(content=compress_research_human_message)]
     response = compress_model.invoke(messages)
-
+    
     # Extract raw notes from tool and AI messages
     raw_notes = [
         str(m.content) for m in filter_messages(
@@ -90,7 +90,7 @@ def compress_research(state: ResearcherState) -> dict:
             include_types=["tool", "ai"]
         )
     ]
-
+    
     return {
         "compressed_research": str(response.content),
         "raw_notes": ["\n".join(raw_notes)]
@@ -100,17 +100,17 @@ def compress_research(state: ResearcherState) -> dict:
 
 def should_continue(state: ResearcherState) -> Literal["tool_node", "compress_research"]:
     """Determine whether to continue research or provide final answer.
-
+    
     Determines whether the agent should continue the research loop or provide
     a final answer based on whether the LLM made tool calls.
-
+    
     Returns:
         "tool_node": Continue to tool execution
         "compress_research": Stop and compress research
     """
     messages = state["researcher_messages"]
     last_message = messages[-1]
-
+    
     # If the LLM makes a tool call, continue to tool execution
     if last_message.tool_calls:
         return "tool_node"

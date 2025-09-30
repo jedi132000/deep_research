@@ -1,12 +1,92 @@
-# 🧱 Deep Research From Scratch 
+# 🧱 Deep Research Agent
 
-Deep research has broken out as one of the most popular agent applications. [OpenAI](https://openai.com/index/introducing-deep-research/), [Anthropic](https://www.anthropic.com/engineering/built-multi-agent-research-system), [Perplexity](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research), and [Google](https://gemini.google/overview/deep-research/?hl=en) all have deep research products that produce comprehensive reports using [various sources](https://www.anthropic.com/news/research) of context. There are also many [open](https://huggingface.co/blog/open-deep-research) [source](https://github.com/google-gemini/gemini-fullstack-langgraph-quickstart) implementations. We built an [open deep researcher](https://github.com/langchain-ai/open_deep_research) that is simple and configurable, allowing users to bring their own models, search tools, and MCP servers. In this repo, we'll build a deep researcher from scratch! Here is a map of the major pieces that we will build:
+> **Accelerate your insights with multi-mode AI research**
 
-![overview](https://github.com/user-attachments/assets/b71727bd-0094-40c4-af5e-87cdb02123b4)
+An AI-powered research assistant that conducts comprehensive research using multiple modes and specialized agents. Built with LangGraph and designed for both researchers and developers who need deep, accurate, and well-sourced information.
 
-## 🚀 Quickstart 
+Deep research has broken out as one of the most popular agent applications. [OpenAI](https://openai.com/index/introducing-deep-research/), [Anthropic](https://www.anthropic.com/engineering/built-multi-agent-research-system), [Perplexity](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research), and [Google](https://gemini.google/overview/deep-research/?hl=en) all have deep research products that produce comprehensive reports using [various sources](https://www.anthropic.com/news/research) of context. There are also many [open](https://huggingface.co/blog/open-deep-research) [source](https://github.com/google-gemini/gemini-fullstack-langgraph-quickstart) implementations.
+
+This repository implements a complete deep research system built from scratch with multiple research modes, agent coordination, and professional interfaces.
+
+![Deep Research Agent Overview](https://github.com/user-attachments/assets/b71727bd-0094-40c4-af5e-87cdb02123b4)
+
+---
+
+## ✨ Features
+
+### 🔍 **Multiple Research Modes**
+- **🚀 Basic Research**: Lightning-fast web search with advanced algorithms
+- **📁 MCP Research**: Intelligent local file analysis using Model Context Protocol  
+- **🌍 Enhanced MCP Research**: **NEW!** Local files + Google Data Commons statistical datasets
+- **🧠 Full Multi-Agent**: Comprehensive workflow with specialized agent orchestration
+- **💬 Interactive Mode**: Chat-based interface for iterative research sessions
+
+### 🎯 **Professional Interfaces**
+- **🌐 Enhanced Web UI**: Modern, responsive Streamlit interface with research history
+- **⚡ CLI Tool**: Powerful command-line interface for automation and scripting
+- **📚 Python API**: Programmatic access for integration into other systems
+
+### 🛠 **Advanced Capabilities**
+- **Multi-source Research**: Combines web search, local files, and structured analysis
+- **Citation Management**: Automatic source tracking and formatted references
+- **Research History**: Persistent session memory and query management
+- **Export Options**: Markdown downloads and clipboard integration
+
+---
+
+## Installation
+
+### Quick Install
+
+```bash
+pip install -e .
+```
+
+### With Optional Dependencies
+
+```bash
+# For web interface
+pip install -e ".[web]"
+
+# For enhanced MCP with Data Commons (optional)
+pip install -e ".[enhanced]"
+
+# Install everything
+pip install -e ".[all]"
+```
 
 ### Prerequisites
+
+#### **For Enhanced MCP Research (NEW!)**
+
+Get access to Google's Data Commons - a vast repository of public statistical data:
+
+```bash
+# 1. Get a free Data Commons API key
+# Visit: https://apikeys.datacommons.org/
+# Request access for api.datacommons.org domain
+
+# 2. Add to your .env file
+echo "DC_API_KEY=your_data_commons_api_key" >> .env
+
+# 3. Install enhanced dependencies
+pip install -e ".[enhanced]"
+```
+
+#### **For MCP Research**
+
+For MCP research mode, you need Node.js installed:
+
+```bash
+# macOS
+brew install node
+
+# Ubuntu/Debian
+sudo apt install nodejs npm
+
+# Windows
+# Download from https://nodejs.org/
+```
 
 - **Node.js and npx** (required for MCP server in notebook 3):
 ```bash
@@ -78,6 +158,110 @@ uv run jupyter notebook
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 jupyter notebook
 ```
+
+---
+
+## 🚀 Usage Guide
+
+### 🌐 **Web Interface** (Recommended)
+
+Launch the enhanced web interface for the best user experience:
+
+```bash
+# Start the web application
+source .venv/bin/activate
+streamlit run web_app.py
+
+# Or with uv
+uv run streamlit run web_app.py
+```
+
+**Features:**
+- **🎨 Modern UI**: Gradient header, card-based design, and responsive layout
+- **📊 Research Modes**: Visual radio button selection with detailed descriptions
+- **📚 Research History**: Collapsible sidebar with recent queries and one-click repeat
+- **⬇️ Export Options**: Download results as Markdown or copy to clipboard  
+- **💡 Pro Tips**: Built-in guidance for better research queries
+- **♿ Accessibility**: Keyboard shortcuts, proper labeling, and high contrast
+
+**Access**: Open http://localhost:8501 in your browser
+
+### ⚡ **Command Line Interface**
+
+For automation, scripting, and power users:
+
+```bash
+# Basic research (fastest)
+deep-research --query "Compare quantum computing vs classical computing performance"
+
+# MCP research (local files)  
+deep-research --mode mcp --query "Summarize my project documentation"
+
+# Enhanced MCP research (local files + Data Commons statistics)
+deep-research --mode enhanced --query "Compare GDP growth rates with local economic analysis"
+
+# Full multi-agent research (most comprehensive)
+deep-research --mode full --query "Analyze the competitive landscape of AI startups"
+
+# Interactive mode (chat-based)
+deep-research --interactive
+
+# Get help
+deep-research --help
+```
+
+**Interactive Commands:**
+- `/basic <query>` - Run fast basic research (no scoping)
+- `/mcp <query>` - Run MCP research with local files (includes scoping)
+- `/enhanced <query>` - **NEW!** Run enhanced MCP with Data Commons + local files (includes scoping)
+- `/full <query>` - Run comprehensive multi-agent research (includes scoping)
+- `/scoped-basic <query>` - Run basic research with scoping step
+- `/quit` - Exit interactive mode
+
+### 🐍 **Python API**
+
+For programmatic integration:
+
+```python
+import asyncio
+from deep_research_from_scratch.main import run_basic_research
+
+# Basic research
+result = asyncio.run(run_basic_research("Your research question"))
+print(result)
+
+# With custom configuration
+from deep_research_from_scratch.research_agent import researcher_agent
+from langchain_core.messages import HumanMessage
+
+response = await researcher_agent.ainvoke({
+    "researcher_messages": [HumanMessage(content="Your query")]
+})
+```
+
+### 📝 **Quick Start Examples**
+
+```bash
+# Technology comparison
+deep-research -q "Compare React vs Vue.js for enterprise applications"
+
+# Market research with statistics
+deep-research -m enhanced -q "Analyze unemployment trends in BRICS nations using statistical data"
+
+# Academic research
+deep-research -q "Summarize recent breakthroughs in CRISPR gene editing"
+
+# Local document analysis
+deep-research -m mcp -q "What are the key findings in my research notes?"
+
+# Statistical analysis with Data Commons
+deep-research -m enhanced -q "Compare healthcare outcomes across US states"
+
+# Economic data analysis
+deep-research -m enhanced -q "Generate a report on income vs education levels globally"
+```
+
+---
 
 ## Background 
 

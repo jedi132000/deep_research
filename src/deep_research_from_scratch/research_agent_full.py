@@ -15,11 +15,11 @@ input through final report delivery.
 from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, START, END
 
-from deep_research_from_scratch.utils import get_today_str
-from deep_research_from_scratch.prompts import final_report_generation_prompt
-from deep_research_from_scratch.state_scope import AgentState, AgentInputState
-from deep_research_from_scratch.research_agent_scope import clarify_with_user, write_research_brief
-from deep_research_from_scratch.multi_agent_supervisor import supervisor_agent
+from .utils import get_today_str
+from .prompts import final_report_generation_prompt
+from .state_scope import AgentState, AgentInputState
+from .research_agent_scope import clarify_with_user, write_research_brief
+from .multi_agent_supervisor import supervisor_agent
 
 # ===== Config =====
 
@@ -28,7 +28,7 @@ writer_model = init_chat_model(model="openai:gpt-4.1", max_tokens=32000) # model
 
 # ===== FINAL REPORT GENERATION =====
 
-from deep_research_from_scratch.state_scope import AgentState
+from .state_scope import AgentState
 
 async def final_report_generation(state: AgentState):
     """

@@ -25,14 +25,10 @@ from langchain_core.messages import (
 from langgraph.graph import StateGraph, START, END
 from langgraph.types import Command
 
-from deep_research_from_scratch.prompts import lead_researcher_prompt
-from deep_research_from_scratch.research_agent import researcher_agent
-from deep_research_from_scratch.state_multi_agent_supervisor import (
-    SupervisorState, 
-    ConductResearch, 
-    ResearchComplete
-)
-from deep_research_from_scratch.utils import get_today_str, think_tool
+from .prompts import lead_researcher_prompt
+from .research_agent import researcher_agent
+from .state_multi_agent_supervisor import SupervisorState, ConductResearch, ResearchComplete
+from .utils import get_today_str, think_tool
 
 def get_notes_from_tool_calls(messages: list[BaseMessage]) -> list[str]:
     """Extract research notes from ToolMessage objects in supervisor message history.
@@ -117,7 +113,8 @@ async def supervisor(state: SupervisorState) -> Command[Literal["supervisor_tool
         }
     )
 
-async def supervisor_tools(state: SupervisorState) -> Command[Literal["supervisor", "__end__"]]:
+
+async def supervisor_tools_handler(state: SupervisorState) -> Command[Literal["supervisor", "__end__"]]:
     """Execute supervisor decisions - either conduct research or end the process.
 
     Handles:
@@ -243,6 +240,6 @@ async def supervisor_tools(state: SupervisorState) -> Command[Literal["superviso
 # Build supervisor graph
 supervisor_builder = StateGraph(SupervisorState)
 supervisor_builder.add_node("supervisor", supervisor)
-supervisor_builder.add_node("supervisor_tools", supervisor_tools)
+supervisor_builder.add_node("supervisor_tools", supervisor_tools_handler)
 supervisor_builder.add_edge(START, "supervisor")
 supervisor_agent = supervisor_builder.compile()

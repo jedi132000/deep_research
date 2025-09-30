@@ -2,7 +2,7 @@
 name = "deep_research_from_scratch"
 version = "0.1.0"
 description = "Build a deep research agent from scratch"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
 "langgraph>=0.5.4",
 "langchain>=0.3.0",
@@ -10,16 +10,23 @@ dependencies = [
 "langchain-anthropic>=0.3.0",
 "langchain_community>=0.3.27",
 "langchain_tavily>=0.2.7",
-"langchain_mcp_adapters>=0.1.9",
 "pydantic>=2.0.0",
 "rich>=14.0.0",
-"jupyter>=1.0.0",
-"ipykernel>=6.20.0",
 "tavily-python>=0.5.0",
+"python-dotenv>=1.0.0",
 ]
 
 [project.optional-dependencies]
+web = ["streamlit>=1.28.0"]
+mcp = ["langchain_mcp_adapters>=0.1.9"]
+datacommons = ["datacommons-mcp>=1.0.0"]
+enhanced = ["langchain_mcp_adapters>=0.1.9", "datacommons-mcp>=1.0.0"]
+notebook = ["jupyter>=1.0.0", "ipykernel>=6.20.0"]
 dev = ["mypy>=1.11.1", "ruff>=0.6.1"]
+all = ["streamlit>=1.28.0", "langchain_mcp_adapters>=0.1.9", "datacommons-mcp>=1.0.0", "jupyter>=1.0.0", "ipykernel>=6.20.0"]
+
+[project.scripts]
+deep-research = "deep_research_from_scratch.main:main"
 
 [build-system]
 requires = ["setuptools>=73.0.0", "wheel"]
