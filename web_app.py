@@ -513,6 +513,15 @@ with col1:
         
         # Academic Citation Helper (for all modes)
         feedback_collector.show_academic_citation_helper()
+        
+        # Academic Mode Status Indicator
+        academic_mode = st.session_state.get('academic_mode', {})
+        if academic_mode.get('enabled', False):
+            st.success(f"""
+            🎓 **Academic Mode Active**: {academic_mode.get('citation_style', 'APA')} citations for {academic_mode.get('academic_level', 'Undergraduate')} level research
+            
+            *Your research will prioritize peer-reviewed sources and include proper academic formatting.*
+            """)
     
         # Chatbot Interface - Only for advanced modes
         if st.session_state.chatbot_active:
@@ -971,8 +980,11 @@ if st.session_state.submitted_query and not st.session_state.get('processing', F
             status_text.markdown(f"**� {current_progress['steps'][1]['icon']} {current_progress['steps'][1]['text']}...**")
             time_container.markdown(f"⏱️ Research in progress... | Step 2 of {total_steps}")
         
-        # Execute research with progress tracking
-        result = asyncio.run(research_func(research_query))
+        # Get academic mode settings from session state
+        academic_mode = st.session_state.get('academic_mode', {})
+        
+        # Execute research with progress tracking and academic settings
+        result = asyncio.run(research_func(research_query, academic_mode))
         
         # Show step 3: Finalizing (if it exists)
         if len(current_progress["steps"]) > 2:

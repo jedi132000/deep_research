@@ -128,13 +128,28 @@ class FeedbackCollector:
             - ✅ Fact-checking cross-references
             """)
             
-            if st.button("🎓 Enable Academic Mode", key="academic_mode"):
+            # Initialize academic mode in session state if not exists
+            if 'academic_mode' not in st.session_state:
+                st.session_state.academic_mode = {"enabled": False}
+            
+            if st.button("🎓 Enable Academic Mode", key="enable_academic_mode"):
                 st.session_state.academic_mode = {
                     "citation_style": citation_style,
                     "academic_level": academic_level,
                     "enabled": True
                 }
                 st.success(f"✅ Academic mode enabled with {citation_style} citations for {academic_level} level research.")
+                
+                # Show what will be enhanced
+                st.info(f"""
+                **🔬 Enhanced Research Features Now Active:**
+                - **Citation Format**: All sources formatted in {citation_style} style
+                - **Source Quality**: Prioritizes peer-reviewed and scholarly publications
+                - **Research Depth**: Adjusted for {academic_level} academic level
+                - **Fact-Checking**: Cross-references across multiple authoritative sources
+                - **Academic Rigor**: Enhanced quality standards and source credibility assessment
+                """)
+                st.rerun()
     
     def save_feedback(self, feedback_data: Dict):
         """Save feedback to local file for analysis"""

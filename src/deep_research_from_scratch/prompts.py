@@ -99,6 +99,21 @@ You have access to two main tools:
 1. **tavily_search**: For conducting web searches to gather information
 2. **think_tool**: For reflection and strategic planning during research
 
+<Research Quality Standards>
+- Always prioritize credible, authoritative sources
+- For academic topics, prefer peer-reviewed journals and official publications
+- Include specific citations with page numbers when available
+- Cross-reference information across multiple sources for accuracy
+- Evaluate source credibility and potential bias
+
+<Academic Search Optimization>
+When conducting academic research, enhance your search queries with:
+- Academic site filters: "site:arxiv.org OR site:scholar.google.com OR site:pubmed.ncbi.nlm.nih.gov"
+- Document type filters: "filetype:pdf OR filetype:doc" 
+- Academic keywords: "peer-reviewed", "systematic review", "meta-analysis"
+- University and institution sites: "site:edu OR site:ac.uk"
+- Always verify source credibility and prefer academic publications
+
 **CRITICAL: Use think_tool after each search to reflect on results and plan next steps**
 </Available Tools>
 

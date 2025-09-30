@@ -92,42 +92,99 @@ async def run_scoping_research(query: str) -> str:
         else:
             return f"**Scoping Error**\\n\\nUnable to process the scoping request: {str(e)}\\n\\n*Please try rephrasing your query or use a different research mode.*"
 
-async def run_basic_research(query: str) -> str:
+async def run_basic_research(query: str, academic_mode: dict | None = None) -> str:
     """Run basic research agent without MCP"""
     from .research_agent import researcher_agent
     
-    console.print(Panel("[bold blue]Running Basic Research Agent[/bold blue]", expand=False))
+    # Enhance query with academic requirements if academic mode is enabled
+    if academic_mode and academic_mode.get("enabled", False):
+        citation_style = academic_mode.get("citation_style", "APA")
+        academic_level = academic_mode.get("academic_level", "Undergraduate")
+        
+        enhanced_query = f"""{query}
+
+[ACADEMIC MODE REQUIREMENTS]
+- Use {citation_style} citation style
+- Research depth appropriate for {academic_level} level
+- Prioritize peer-reviewed and scholarly sources
+- Include proper citations with page numbers when available
+- Ensure high source credibility and cross-reference facts
+- Focus on academic quality and rigor"""
+        
+        console.print(Panel(f"[bold blue]Running Academic Research Agent ({citation_style}, {academic_level})[/bold blue]", expand=False))
+    else:
+        enhanced_query = query
+        console.print(Panel("[bold blue]Running Basic Research Agent[/bold blue]", expand=False))
     
-    result = await researcher_agent.ainvoke({"researcher_messages": [HumanMessage(content=query)]})
+    result = await researcher_agent.ainvoke({"researcher_messages": [HumanMessage(content=enhanced_query)]})
     return result.get('compressed_research', 'No research results found')
 
-async def run_mcp_research(query: str) -> str:
+async def run_mcp_research(query: str, academic_mode: dict | None = None) -> str:
     """Run MCP-enabled research agent with filesystem access"""
     try:
         from .research_agent_mcp import agent_mcp
         
-        console.print(Panel("[bold green]Running MCP Research Agent[/bold green]", expand=False))
+        # Enhance query with academic requirements if academic mode is enabled
+        if academic_mode and academic_mode.get("enabled", False):
+            citation_style = academic_mode.get("citation_style", "APA")
+            academic_level = academic_mode.get("academic_level", "Undergraduate")
+            
+            enhanced_query = f"""{query}
+
+[ACADEMIC MODE REQUIREMENTS]
+- Use {citation_style} citation style
+- Research depth appropriate for {academic_level} level
+- Prioritize peer-reviewed and scholarly sources
+- Include proper citations with page numbers when available
+- Ensure high source credibility and cross-reference facts
+- Focus on academic quality and rigor
+- Save research with academic formatting"""
+            
+            console.print(Panel(f"[bold green]Running Academic MCP Research Agent ({citation_style}, {academic_level})[/bold green]", expand=False))
+        else:
+            enhanced_query = query
+            console.print(Panel("[bold green]Running MCP Research Agent[/bold green]", expand=False))
         
-        result = await agent_mcp.ainvoke({"researcher_messages": [HumanMessage(content=query)]})
+        result = await agent_mcp.ainvoke({"researcher_messages": [HumanMessage(content=enhanced_query)]})
         return result.get('compressed_research', 'No research results found')
     except ImportError as e:
         console.print(f"[red]MCP dependencies not available: {e}[/red]")
         return "MCP research not available. Please ensure Node.js and MCP packages are installed."
 
-async def run_enhanced_mcp_research(query: str) -> str:
+async def run_enhanced_mcp_research(query: str, academic_mode: dict | None = None) -> str:
     """Run enhanced MCP research agent with Data Commons + filesystem access"""
     try:
         from .research_agent_mcp_enhanced import agent_mcp_enhanced
         
-        console.print(Panel("[bold blue]Running Enhanced MCP Research Agent with Data Commons[/bold blue]", expand=False))
+        # Enhance query with academic requirements if academic mode is enabled
+        if academic_mode and academic_mode.get("enabled", False):
+            citation_style = academic_mode.get("citation_style", "APA")
+            academic_level = academic_mode.get("academic_level", "Undergraduate")
+            
+            enhanced_query = f"""{query}
+
+[ACADEMIC MODE REQUIREMENTS]
+- Use {citation_style} citation style
+- Research depth appropriate for {academic_level} level
+- Prioritize peer-reviewed and scholarly sources
+- Include proper citations with page numbers when available
+- Ensure high source credibility and cross-reference facts
+- Focus on academic quality and rigor
+- Utilize Data Commons for statistical validation
+- Save research with academic formatting"""
+            
+            console.print(Panel(f"[bold blue]Running Academic Enhanced MCP Research Agent ({citation_style}, {academic_level})[/bold blue]", expand=False))
+        else:
+            enhanced_query = query
+            console.print(Panel("[bold blue]Running Enhanced MCP Research Agent with Data Commons[/bold blue]", expand=False))
         
-        result = await agent_mcp_enhanced.ainvoke({"researcher_messages": [HumanMessage(content=query)]})
+        result = await agent_mcp_enhanced.ainvoke({"researcher_messages": [HumanMessage(content=enhanced_query)]})
         return result.get('compressed_research', 'No research results found')
     except ImportError as e:
         console.print(f"[red]Enhanced MCP dependencies not available: {e}[/red]")
         return "Enhanced MCP research not available. Please ensure Node.js, MCP packages, and Data Commons API key are configured."
 
-async def run_full_research(query: str) -> str:
+async def run_full_research(query: str, academic_mode: dict | None = None) -> str:
     """Run full multi-agent research system with scoping and final report"""
     from .research_agent_full import deep_researcher_builder
     from langgraph.checkpoint.memory import InMemorySaver
@@ -137,11 +194,32 @@ async def run_full_research(query: str) -> str:
     checkpointer = InMemorySaver()
     full_agent = deep_researcher_builder.compile(checkpointer=checkpointer)
     
+    # Enhance query with academic requirements if academic mode is enabled
+    if academic_mode and academic_mode.get("enabled", False):
+        citation_style = academic_mode.get("citation_style", "APA")
+        academic_level = academic_mode.get("academic_level", "Undergraduate")
+        
+        enhanced_query = f"""{query}
+
+[ACADEMIC MODE REQUIREMENTS]
+- Use {citation_style} citation style
+- Research depth appropriate for {academic_level} level
+- Prioritize peer-reviewed and scholarly sources
+- Include proper citations with page numbers when available
+- Ensure high source credibility and cross-reference facts
+- Focus on academic quality and rigor
+- Multi-agent coordination for comprehensive academic research"""
+        
+        console.print(Panel(f"[bold yellow]Running Academic Full Multi-Agent Research System ({citation_style}, {academic_level})[/bold yellow]", expand=False))
+    else:
+        enhanced_query = query
+        console.print(Panel("[bold yellow]Running Full Multi-Agent Research System[/bold yellow]", expand=False))
+    
     # Configure with higher recursion limit for complex workflows
     config = {"configurable": {"thread_id": "main", "recursion_limit": 50}}
     
     result = await full_agent.ainvoke(
-        {"messages": [HumanMessage(content=query)]}, 
+        {"messages": [HumanMessage(content=enhanced_query)]}, 
         config=config
     )
     
