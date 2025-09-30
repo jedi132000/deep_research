@@ -18,9 +18,12 @@ from src.deep_research_from_scratch.main import (
     run_scoped_full_research as run_full_research
 )
 
-# Import cost tracking and virtual assistant
+# Import cost tracking, virtual assistant, and clarification chatbot
 from src.deep_research_from_scratch.cost_tracker import cost_tracker
-from src.deep_research_from_scratch.virtual_assistant import virtual_assistant# Configure Streamlit        total_steps = len(current_progress[\"steps\"])age
+from src.deep_research_from_scratch.virtual_assistant import virtual_assistant
+from src.deep_research_from_scratch.clarification_chatbot import clarification_chatbot
+
+# Configure Streamlit
 st.set_page_config(
     page_title="Deep Research from Scratch",
     page_icon="🔬",
@@ -411,6 +414,124 @@ col1, col2 = st.columns([3, 1])
 with col1:
     st.markdown("### 📝 Research Query")
     
+    # Check if this is an advanced mode that needs clarification chatbot
+    advanced_modes = ["MCP Research", "Enhanced MCP Research", "Full Research"]
+    is_advanced_mode = mode in advanced_modes
+    
+    # Conversational Clarification Chatbot - Only for advanced modes
+    if is_advanced_mode:
+        st.markdown("#### 💬 Advanced Research Clarification Assistant")
+        st.info("🎯 **Advanced Mode Active**: The clarification chat will help optimize your complex research queries for better results.")
+        
+        # Initialize chatbot session state
+        if 'chatbot_active' not in st.session_state:
+            st.session_state.chatbot_active = True  # Auto-active for advanced modes
+        if 'chat_messages' not in st.session_state:
+            st.session_state.chat_messages = []
+        if 'chat_timestamp' not in st.session_state:
+            st.session_state.chat_timestamp = 0
+        
+        # Auto-activate for advanced modes
+        if is_advanced_mode and not st.session_state.chatbot_active:
+            st.session_state.chatbot_active = True
+        
+        # Chatbot toggle (simplified for advanced modes)
+        col_chat1, col_chat2 = st.columns([2, 1])
+        
+        with col_chat1:
+            st.success("💬 Clarification Assistant Ready - Start typing your research question below!")
+        
+        with col_chat2:
+            col_reset, col_toggle = st.columns(2)
+            with col_reset:
+                if st.button("🔄 Reset"):
+                    st.session_state.chat_messages = []
+                    clarification_chatbot.reset_conversation()
+                    st.session_state.chat_timestamp += 1
+                    st.rerun()
+            with col_toggle:
+                if st.button("⚡ Skip Chat"):
+                    st.session_state.chatbot_active = False
+                    st.rerun()
+    
+        # Chatbot Interface - Only for advanced modes
+        if st.session_state.chatbot_active:
+            st.markdown("---")
+            
+            # Chat container with better styling for advanced modes
+            with st.expander("💬 **Clarification Chat** - Get help refining your research query", expanded=True):
+                # Display chat history
+                if st.session_state.chat_messages:
+                    for message in st.session_state.chat_messages:
+                        if message["role"] == "user":
+                            with st.chat_message("user"):
+                                st.write(message["content"])
+                        else:
+                            with st.chat_message("assistant"):
+                                st.markdown(message["content"])
+                else:
+                    with st.chat_message("assistant"):
+                        st.markdown("""👋 **Welcome to Advanced Research Mode!** 
+
+I'm your clarification assistant. I'll help you refine your research question to get the best results from our advanced research capabilities.
+
+**What would you like to research today?** Be as specific or as broad as you'd like - I'll help you narrow it down.""")
+            
+            # Chat input
+            chat_input = st.chat_input("💭 Describe what you want to research... (I'll help make it more specific)")
+            
+            if chat_input:
+                # Add user message
+                st.session_state.chat_messages.append({"role": "user", "content": chat_input})
+                st.session_state.chat_timestamp += 1
+                
+                # Get bot response
+                with st.spinner("🤔 Analyzing your research needs..."):
+                    import asyncio
+                    try:
+                        response = asyncio.run(clarification_chatbot.chat(chat_input))
+                        
+                        # Add bot response
+                        st.session_state.chat_messages.append({
+                            "role": "assistant", 
+                            "content": response["response"]
+                        })
+                        
+                        # Check if clarification is complete
+                        if response["is_complete"]:
+                            st.success("🎉 **Perfect!** Your research query is now well-defined and ready for advanced research.")
+                            if response["research_brief"]:
+                                st.markdown("### 📋 **Final Research Brief**")
+                                st.markdown(response["research_brief"])
+                                
+                                # Auto-populate the query field
+                                refined_query = response["research_brief"]
+                                st.session_state.suggested_query = refined_query
+                                
+                                col_action1, col_action2 = st.columns(2)
+                                with col_action1:
+                                    if st.button("🚀 **Start Research with This Query**", type="primary"):
+                                        st.session_state.chatbot_active = False
+                                        st.rerun()
+                                with col_action2:
+                                    if st.button("✏️ **Continue Refining**"):
+                                        st.session_state.chat_messages.append({
+                                            "role": "assistant",
+                                            "content": "Great! What else would you like to adjust about your research focus?"
+                                        })
+                                        st.rerun()
+                        
+                    except Exception as e:
+                        st.error(f"💥 Chat temporarily unavailable: {str(e)}")
+                        st.session_state.chat_messages.append({
+                            "role": "assistant",
+                            "content": "I'm having trouble right now. Could you try rephrasing your question?"
+                        })
+                
+                st.rerun()
+            
+            st.markdown("---")
+    
 with col2:
     st.markdown("### 🎯 Quick Examples")
 
@@ -421,21 +542,21 @@ with col1:
     # Debug info right above the text area
     st.caption(f"🔧 Debug: Using key '{current_key}', clear_input={st.session_state.clear_input}")
     
-    # Check if we have a suggested query to use
+    # Check if we have a suggested query from chatbot
     default_value = ""
     if hasattr(st.session_state, 'suggested_query') and st.session_state.suggested_query:
         default_value = st.session_state.suggested_query
         # Clear the suggestion after using it
         delattr(st.session_state, 'suggested_query')
     
-    # Check if this is an advanced mode that should trigger real-time scoping
-    advanced_modes = ["MCP Research", "Enhanced MCP Research", "Full Research"]
-    is_advanced_mode = mode in advanced_modes
-    
-    # Adjust placeholder and help text for advanced modes
+    # Adjust placeholder and help text based on mode
     if is_advanced_mode:
-        placeholder_text = "Start typing your research question - scoping assistance will appear automatically for complex queries..."
-        help_text = "🎯 Advanced mode: Real-time scoping will help optimize your research approach as you type"
+        if st.session_state.chatbot_active:
+            placeholder_text = "Use the clarification chat above to refine your query, or enter your research question directly here..."
+            help_text = "🎯 Advanced mode: Use the chat above for guided query refinement, or enter your question directly"
+        else:
+            placeholder_text = "Enter your refined research question from the clarification chat..."
+            help_text = "✅ Your query has been refined - ready for advanced research!"
     else:
         placeholder_text = "Be specific and detailed for comprehensive results..."
         help_text = "💡 Tip: The more specific your question, the better the research results"
@@ -449,35 +570,11 @@ with col1:
         key=current_key
     )
     
-    # Real-time scoping for advanced modes
-    if is_advanced_mode and query and len(query.strip()) > 15:  # Trigger scoping for substantial queries
-        if 'scoping_cache' not in st.session_state:
-            st.session_state.scoping_cache = {}
-        
-        # Only run scoping if query changed or not cached
-        query_hash = hash(query.strip().lower())
-        if query_hash not in st.session_state.scoping_cache:
-            with st.spinner("🔍 Analyzing your query for optimal research scoping..."):
-                try:
-                    # Import and run scoping
-                    from src.deep_research_from_scratch.main import run_scoping_research
-                    import asyncio
-                    
-                    scoping_result = asyncio.run(run_scoping_research(query))
-                    st.session_state.scoping_cache[query_hash] = scoping_result
-                except Exception as e:
-                    st.session_state.scoping_cache[query_hash] = f"**Scoping temporarily unavailable**: {str(e)}"
-        
-        # Display the scoping result
-        scoping_output = st.session_state.scoping_cache[query_hash]
-        if scoping_output:
-            st.markdown("### 🎯 Smart Scoping Assistant")
-            st.markdown(scoping_output)
-            st.markdown("---")
-    
     # Show what the query variable contains
     if query:
         st.caption(f"📝 Current input: '{query}' (length: {len(query)})")
+        if is_advanced_mode and not st.session_state.chatbot_active:
+            st.info("💡 **Tip**: For advanced modes, consider using the clarification chat to optimize your query further.")
     else:
         st.caption("📝 Input is empty")
 
