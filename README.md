@@ -1,12 +1,46 @@
 # 🧱 Deep Research Agent
 
-> **Accelerate your insights with multi-mode AI research**
+> **🚀 Enhanced Edition with Professional Web UI & Advanced Features**
 
 An AI-powered research assistant that conducts comprehensive research using multiple modes and specialized agents. Built with LangGraph and designed for both researchers and developers who need deep, accurate, and well-sourced information.
+
+## 🆕 **What's New in This Enhanced Version**
+
+### 🌐 **Professional Web Interface**
+- **Modern Streamlit UI** with gradient design and card-based layout
+- **Research History** with one-click repeat functionality
+- **Export Options** - Download as Markdown or copy to clipboard
+- **Progress Indicators** with animated steps and completion states
+- **Accessibility Features** - Dark text, keyboard shortcuts, proper labeling
+
+### ⚡ **Optimized Performance**
+- **Fast Basic Research** - Direct execution without scoping for quick queries
+- **Smart Scoping** - Advanced modes include intelligent query clarification
+- **Robust Error Handling** - API quota management with fallback suggestions
+- **Token Usage Warnings** - Clear guidance on API consumption
+
+### 🛠 **Enhanced Capabilities**
+- **Google Data Commons Integration** - Access to vast statistical datasets
+- **Improved CLI** - Interactive mode with multiple research commands
+- **Better Documentation** - Comprehensive setup guides and examples
 
 Deep research has broken out as one of the most popular agent applications. [OpenAI](https://openai.com/index/introducing-deep-research/), [Anthropic](https://www.anthropic.com/engineering/built-multi-agent-research-system), [Perplexity](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research), and [Google](https://gemini.google/overview/deep-research/?hl=en) all have deep research products that produce comprehensive reports using [various sources](https://www.anthropic.com/news/research) of context. There are also many [open](https://huggingface.co/blog/open-deep-research) [source](https://github.com/google-gemini/gemini-fullstack-langgraph-quickstart) implementations.
 
 This repository implements a complete deep research system built from scratch with multiple research modes, agent coordination, and professional interfaces.
+
+## 🚀 **Quick Start**
+
+```bash
+# Clone and setup
+git clone https://github.com/jedi132000/deep_research.git
+cd deep_research
+uv sync
+source .venv/bin/activate
+
+# Launch web interface
+streamlit run web_app.py
+# → Open http://localhost:8501
+```
 
 ![Deep Research Agent Overview](https://github.com/user-attachments/assets/b71727bd-0094-40c4-af5e-87cdb02123b4)
 
